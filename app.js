@@ -98,13 +98,13 @@ let previouslyPressedKey = 0;
 
     p.on('signal', function (data) {
       ownIDKey.value = b64EncodeUnicode(JSON.stringify(data));
-      ownIDContainer.style.visibility = 'visible';
     });
 
     window.connectPeer = () => {
       const peerID = JSON.parse(b64DecodeUnicode(peerIDKey.value));
       p.signal(peerID);
       urlToInit.style.visibility = 'hidden';
+      ownIDContainer.style.visibility = 'visible';
     }
 
     window.sendMessage = async () => {
