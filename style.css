@@ -11,7 +11,7 @@ div#ownIDContainer {
 }
 
 div#messageContainer {
-  max-height: 48vh;
+  max-height: 50vh;
   overflow-y: auto;
   -ms-overflow-style: none;
 }

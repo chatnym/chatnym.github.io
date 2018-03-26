@@ -135,6 +135,8 @@ let previouslyPressedKey = 0;
       document.getElementsByClassName('heading-text')[0].innerText = 'connected';
       await sleep(1);
       document.getElementsByClassName('heading-text')[0].innerText = 'chatnym';
+      ownIDContainer.style.display = 'none';
+      peerIDContainer.style.display = 'none';
       message.focus();
     });
 
