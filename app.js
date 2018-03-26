@@ -81,7 +81,6 @@ let previouslyPressedKey = 0;
     const p = new SimplePeer({
       initiator: isInitiator,
       reconnectTimer: 100,
-      iceTransportPolicy: 'relay',
       trickle: false,
       config: {
         iceServers: [
