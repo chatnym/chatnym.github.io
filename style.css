@@ -1,0 +1,25 @@
+.heading-text {
+  color: red;
+}
+
+div#ownIDContainer {
+  visibility: hidden;
+}
+
+#urlToInit {
+  visibility: hidden;
+}
+
+div#messageContainer {
+  max-height: 48vh;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+}
+
+div#messageContainer::-webkit-scrollbar { 
+  display: none; 
+}
+
+.footer {
+  visibility: hidden;
+}
