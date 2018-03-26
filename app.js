@@ -80,7 +80,7 @@ let previouslyPressedKey = 0;
 
     const p = new SimplePeer({
       initiator: isInitiator,
-      trickle: true
+      trickle: false
     });
 
     p.on('error', function (err) { console.error('error', err) });
