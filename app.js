@@ -20,9 +20,18 @@ function copyOwnIDKey() {
   document.execCommand('copy');
 }
 
+const sleep = async (seconds) => {
+  const ms = seconds * 1000;
+  await (new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  }));
+};
+
 openpgp.config.compression = openpgp.enums.compression.zip;
 
 let passphrase = [...window.crypto.getRandomValues(new Uint8Array(256))].join('');
+
+let previouslyPressedKey = 0;
 
 (
   async () => {
@@ -93,8 +102,10 @@ let passphrase = [...window.crypto.getRandomValues(new Uint8Array(256))].join(''
         return false;
       }
 
-      const sanitized = sanitize(message.value);
-      
+      message.value = message.value.trim();
+
+      const sanitized = sanitize(message.value).trim().replace(/\n/g, '<br>');
+
       messageContainer.innerHTML += `
       <div class="alert alert-secondary" role="alert">
         <div class="row">
@@ -114,11 +125,17 @@ let passphrase = [...window.crypto.getRandomValues(new Uint8Array(256))].join(''
       message.value = '';
     }
 
-    p.on('connect', function () {
+    p.on('connect', async function () {
       console.log('CONNECTED');
       p.send(key.publicKeyArmored);
       document.getElementsByClassName('heading-text')[0].style.color = '#17a2b8';
       document.getElementsByClassName('footer')[0].style.visibility = 'visible';
+      ownIDKey.type = 'password';
+      peerIDKey.type = 'password';
+      document.getElementsByClassName('heading-text')[0].innerText = 'connected';
+      await sleep(1);
+      document.getElementsByClassName('heading-text')[0].innerText = 'chatnym';
+      message.focus();
     });
 
     p.on('data', async function(data) {
@@ -128,7 +145,7 @@ let passphrase = [...window.crypto.getRandomValues(new Uint8Array(256))].join(''
         return;
       } else if(data.startsWith('-----BEGIN PGP MESSAGE-----')) {
         const decrypted = await decrypt(data, key);
-        const sanitized = sanitize(decrypted);
+        const sanitized = sanitize(decrypted).trim().replace(/\n/g, '<br>');
         messageContainer.innerHTML += `
         <div class="alert alert-info" role="alert">
           <div class="row">
@@ -144,6 +161,15 @@ let passphrase = [...window.crypto.getRandomValues(new Uint8Array(256))].join(''
         messageContainer.scrollTo(0, messageContainer.scrollHeight);
       } else {
         throw new Error('Unencrypted Message Sent! Message Text: ' + data.toString());
+      }
+    });
+
+    message.addEventListener('keydown', async (event) => {
+      event.which = event.which || event.keyCode;
+      if(event.which === 13 && event.shiftKey === false) {
+        event.preventDefault();
+        await window.sendMessage();
+        return false;
       }
     });
 
