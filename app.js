@@ -81,7 +81,7 @@ let previouslyPressedKey = 0;
     const p = new SimplePeer({
       initiator: isInitiator,
       reconnectTimer: 100,
-      trickle: false,
+      trickle: true,
       config: {
         iceServers: [
           {urls:'stun:stun.l.google.com:19302'},
