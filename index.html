@@ -1,61 +1,112 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>chatnym</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="stylesheet" href="/bootstrap.min.css">
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <div class="container-fluid">
+  <head>
+    <meta charset="utf-8" />
+    <title>chatnym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/bootstrap.min.css" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <header class="text-center">
+        <h1><a class="heading-text" href="/">chatnym</a></h1>
+        <a href="/?init=true" id="urlToInit">starting first?</a> <br /><br />
+      </header>
 
-    <header class="text-center">
-      <h1>
-        <a class="heading-text" href="/">chatnym</a>
-      </h1>
-      <a href="/?init=true" id="urlToInit">starting first?</a>
-    </header>
+      <div class="row form-group" id="useSignalingServerContainer">
+        <div class="col-4"><div class="row"></div></div>
+        <div class="col-8"><input type="checkbox" id="useSignalingServer" /> <label for="useSignalingServer">Use Signaling Server?</label></div>
+      </div>
 
-    <div class="row form-group" id="ownIDContainer">
-      <div class="col-8">
-        <div class="row">
-          <label for="ownIDKey" class="col-6 col-form-label text-right"><small>My ID: </small></label>
-          <input class="col-6 form-control w-100" placeholder="loading..." type="text" id="ownIDKey" onfocus="this.select()">
+      <div class="row form-group" id="signalingServerContainer">
+        <div class="col-8">
+          <div class="row">
+            <label for="signalingServerURLInput" class="col-6 col-form-label text-right"><small>Server URL: </small></label>
+            <input
+              class="col-6 form-control w-100"
+              placeholder="input url here"
+              type="url"
+              id="signalingServerURLInput"
+              onfocus="this.select()"
+              value="https://signaling.glitch.me"
+              autocomplete="on"
+            />
+          </div>
         </div>
       </div>
-      <div class="col-4">
-        <button class="btn btn-default" id="copyOwnIDKeyButton" onclick="copyOwnIDKey()">Copy</button>
-      </div>
-    </div>
 
-    <div class="row form-group" id="peerIDContainer">
-      <div class="col-8">
-        <div class="row">
-          <label for="peerIDKey" class="col-6 col-form-label text-right"><small>Friend's ID: </small></label>
-          <input class="col-6 form-control w-100" placeholder="paste here" type="text" id="peerIDKey" onfocus="this.select()">
+      <div class="row form-group" id="roomIdContainer">
+        <div class="col-8">
+          <div class="row">
+            <label for="roomId" class="col-6 col-form-label text-right"><small>Room ID: </small></label>
+            <input class="col-6 form-control w-100" placeholder="paste room id here" type="text" id="roomId" onfocus="this.select()" />
+          </div>
+        </div>
+        <div class="col-4"><button class="btn btn-default" id="connectButton" onclick="setSignalingServerAndRoom()">Set</button></div>
+      </div>
+
+      <div class="row form-group" id="ownIDContainer">
+        <div class="col-8">
+          <div class="row">
+            <label for="ownIDKey" class="col-6 col-form-label text-right"><small>My ID: </small></label>
+            <input class="col-6 form-control w-100" placeholder="loading..." type="text" id="ownIDKey" onfocus="this.select()" />
+          </div>
+        </div>
+        <div class="col-4"><button class="btn btn-default" id="copyOwnIDKeyButton" onclick="copyOwnIDKey()">Copy</button></div>
+      </div>
+
+      <div class="row form-group" id="peerIDContainer">
+        <div class="col-8">
+          <div class="row">
+            <label for="peerIDKey" class="col-6 col-form-label text-right"><small>Friend's ID: </small></label>
+            <input class="col-6 form-control w-100" placeholder="paste here" type="text" id="peerIDKey" onfocus="this.select()" />
+          </div>
+        </div>
+        <div class="col-4"><button class="btn btn-default" id="connectButton" onclick="connectPeer()">Connect</button></div>
+      </div>
+
+      <div id="messageContainer"></div>
+
+      <div class="fixed-bottom footer">
+        <div class="container-fluid">
+          <textarea class="form-control mx-auto" id="message" placeholder="type message..." rows="2" cols="30"></textarea>
+          <button class="form-control mx-auto mt-1 mb-1 send-button" onclick="sendMessage()">send</button>
         </div>
       </div>
-      <div class="col-4">
-        <button class="btn btn-default" id="connectButton" onclick="connectPeer()">Connect</button>
-      </div>
     </div>
 
-    <div id="messageContainer"></div>
+    <script>
+      signalingServerContainer.style.display = "none";
+      roomIdContainer.style.display = "none";
 
-    <div class="fixed-bottom footer">
-      <div class="container-fluid">
-        <textarea class="form-control mx-auto" id="message" placeholder="type message..." rows="2" cols="30"></textarea>
-        <button class="form-control mx-auto mt-1 mb-1 send-button" onclick="sendMessage()">send</button>
-      </div>
-    </div>
+      useSignalingServer.addEventListener("change", e => {
+        if (e.target.checked) {
+          ownIDContainer.style.display = "none";
+          peerIDContainer.style.display = "none";
+          signalingServerContainer.style.display = "flex";
+          roomIdContainer.style.display = "flex";
+        } else {
+          signalingServerContainer.style.display = "none";
+          roomIdContainer.style.display = "none";
+          ownIDContainer.style.display = "flex";
+          peerIDContainer.style.display = "flex";
+        }
+      });
+    </script>
 
-  </div>
+    <script src="/openpgp.min.js"></script>
 
-  <script src="/openpgp.min.js"></script>
-  <script src="/simplepeer.min.js"></script>
-  <script src="/purify.min.js"></script>
-  <script src="/app.js"></script>
-</body>
+    <script>
+      if (new URL(document.location).searchParams.get("init")) {
+        roomId.value = [...window.crypto.getRandomValues(new Uint8Array(8))].join("");
+      }
+    </script>
+
+    <script src="/simplepeer.min.js"></script>
+    <script src="/purify.min.js"></script>
+    <script src="/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
 </html>
